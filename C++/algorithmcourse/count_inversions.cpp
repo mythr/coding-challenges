@@ -1,11 +1,12 @@
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 typedef typename std::vector<int>::iterator vecit;
 
-int merge(vecit arr_start, vecit arr_end, vecit left_start, vecit left_end, vecit right_start, vecit right_end)
+long long int merge(vecit arr_start, vecit arr_end, vecit left_start, vecit left_end, vecit right_start, vecit right_end)
 {
-	int inversions = 0;
+	long long int inversions = 0;
 	while(arr_start != arr_end)
 	{
 		while(left_start != left_end and right_start != right_end)
@@ -40,9 +41,9 @@ int merge(vecit arr_start, vecit arr_end, vecit left_start, vecit left_end, veci
 	return inversions;
 }
 
-int mergesort(std::vector<int>& vec)
+long long int count_inversions(std::vector<int>& vec)
 {
-	int inversions = 0;
+	long long int inversions = 0;
 	
 	if(vec.size() == 1)
 		return 0;
@@ -51,26 +52,29 @@ int mergesort(std::vector<int>& vec)
 	std::vector<int> left(vec.begin(), middle);
 	std::vector<int> right(middle, vec.end());
 
-	inversions += mergesort(left);
-	inversions += mergesort(right);
+	inversions += count_inversions(left);
+	inversions += count_inversions(right);
 	inversions += merge(vec.begin(), vec.end(), left.begin(), left.end(), right.begin(), right.end());
-
 	return inversions;
 }
 
 int main()
 {
-	std::vector<int> input = {1, 4, 20  , 3, 5};
-	std::cout << "Sorting ";
-	for(int i : input)
-		std::cout << i << " ";
-	std::cout << std::endl;
-	int inversions = mergesort(input);
-	std::cout << "\nResult: ";
-	for(int i : input)
-		std::cout << i << " ";
-	std::cout << std::endl;
-	std::cout << "Number of inversions is: " << inversions << std::endl;
+	int num = 0;
+	long long int inversions = 0;
+	std::vector<int> input_vec;
+	std::ifstream input_file ("IntegerArray.txt");
+	if(input_file.is_open())
+	{
+		while(input_file >> num)
+		{
+			input_vec.push_back(num);
+		}
+	}
+	else std::cout << "Unable to open file.\n";
+
+	inversions = count_inversions(input_vec);
+	std::cout << inversions << '\n';
 
 	return 0;
 }
