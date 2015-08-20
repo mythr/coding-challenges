@@ -6,6 +6,7 @@ typedef typename std::vector<int>::iterator vecit;
 
 long long int merge(vecit arr_start, vecit arr_end, vecit left_start, vecit left_end, vecit right_start, vecit right_end)
 {
+	static int counter = 0;
 	long long int inversions = 0;
 	while(arr_start != arr_end)
 	{
@@ -22,7 +23,7 @@ long long int merge(vecit arr_start, vecit arr_end, vecit left_start, vecit left
 				*arr_start = *right_start;
 				arr_start++;
 				right_start++;
-				inversions++;
+				inversions += left_end - left_start;
 			}
 		}
 		while(left_start != left_end)
@@ -38,6 +39,8 @@ long long int merge(vecit arr_start, vecit arr_end, vecit left_start, vecit left
 			right_start++;
 		}
 	}
+	//std::cout << "Number of inversions at count " << counter << " is: " << inversions << std::endl;
+	counter++;
 	return inversions;
 }
 
