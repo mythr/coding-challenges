@@ -81,7 +81,7 @@ int main(){
 			
 		}
 	}
-	dijkstra(0,3);
+	dijkstra('A'-'A',3);
 	for(int i = 0; i < MAX; i++)
 		{
 			cout << d[i-'A'] << endl;
