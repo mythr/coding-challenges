@@ -39,6 +39,8 @@ int main(){
 				}
 			}
 		}
+		if(runs != 1)
+			cout << endl;
 		cout << "Field #" << runs <<":" << endl;
 		for(int i = MIDDLE; i < rows + MIDDLE; i++){
 			for(int j = MIDDLE; j < cols + MIDDLE; j++){
@@ -49,6 +51,7 @@ int main(){
 			}
 			cout << endl;
 		}
+		runs++;
 	}
 	
 
