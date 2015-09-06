@@ -4,4 +4,5 @@ C++/algorithmcourse/nlogn
 C++/algorithmcourse/testing.cpp
 C++/algorithmcourse/a.out
 C++/algorithmcourse/bruteforce
-*.out
+*.out*
+*test*
