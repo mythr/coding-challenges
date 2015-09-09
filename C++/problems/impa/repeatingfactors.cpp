@@ -1,40 +1,42 @@
-#include <iostream>
-#include <vector>
-#include <cctype>
-#include <cmath>
-#include <string>
-
+#include<iostream>
+#include<string>
 using namespace std;
 
-int countDecimalPoints(double num){
-	int count = 0;
-	num = num - (int) num;
-	while(num >= .000001){
-		num *= 10;
-		count++;
-		num -= int(num);
-		cout << num << endl;
+long long pow(long long a, int n){
+	long long ret = 1;
+	while (n--) ret *= a;
+	return ret;
+}
+
+long long gcd(long long a, long long b){
+	return b == 0 ? a : gcd(b, a%b);
+}
+
+long long toLong(string s){
+	long long ret = 0;
+	for (char ch : s){
+		ret *= 10;
+		ret += (ch - '0');
 	}
-	return count;
+	return ret;
 }
 
 int main(){
-	int k, j, dig;
-	string digits;
-	int p, q;
-	int run = 1;
-	while(cin >> j){
-		double num = 0.0F;
-		cin >> digits;
-		digits.erase(digits.find('.'),1);
-		digits.erase(0,1);
-		k = digits.size() - j;
-		for(int i = 0; i < digits.size(); i++){
-			num += pow(10,-(i+1))*(int)digits[i];
-		}
-		p = pow(10,k+j)*num - pow(10,k)*num;
-		q = pow(10,k+j) - pow(10,k);
-		cout << "Case " << run << ": " << p << "/" << q << endl;
-
+	int j;
+	string num;
+	int Case = 1;
+	while (cin >> j && j != -1){
+		cin >> num;
+		if (j == 0) { num.push_back('0'); j++; }
+		num = num.substr(2);
+		int k = num.size() - j;
+		long long numerator = toLong(num) - toLong(num.substr(0, k));
+		long long denominator = pow(10, k + j) - pow(10, k);
+		long long g = gcd(numerator, denominator);
+		numerator /= g;
+		denominator /= g;
+		cout << "Case " << Case++ << ": ";
+		cout << numerator << '/' << denominator << endl;
 	}
+	return 0;
 }
