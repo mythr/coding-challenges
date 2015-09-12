@@ -7,107 +7,81 @@
 
 using namespace std;
 
-const int MAX_WEIGHT = 10001;
+const int INF = 10001;
+const int MAX_CITIES = 250;
 
-class Edge;
+typedef pair<map<string,int>::iterator,bool> map_return;
 
-struct Node{
-	string name;
-	vector<Edge> edges;
-	int level = MAX_WEIGHT;
-};
+int graph[MAX_CITIES][MAX_CITIES];
 
-typedef pair<map<string, Node>::iterator, bool> map_ret;
-
-class Edge{
-	Node src;
-	Node dest;
-	int weight;
-public:
-	Edge(Node& from, Node& to,int w){
-		src = from;
-		dest = to;
-		weight = w;
+int bfs(int start, int end){
+	priority_queue<pair<int, int> > q;
+	q.push(make_pair(start,INF));
+	pair<int,int> p;
+	int visited[MAX_CITIES];
+	for(int i = 0; i < MAX_CITIES; i++){
+		visited[i] = -1;
 	}
-	Node& getTo(){
-		return dest;
-	}
-	int getWeight(){
-		return weight;
-	}
-
-};
-
-void addNodes(string firstName, string secondName, int weight, map<string, Node>& nodes){
-	Node first, second;
-	first.name = firstName;
-	second.name = secondName;
-	map_ret ret;
-	Edge e = *(new Edge(first,second,weight));
-	first.edges.push_back(e);
-	ret = nodes.insert(make_pair(firstName, first));
-	if(!ret.second){
-		ret.first -> second.edges.push_back(e);
-	}
-	e = *(new Edge(second,first,weight));
-	second.edges.push_back(e);
-	ret = nodes.insert(make_pair(secondName, second));
-	if(!ret.second){
-		ret.first -> second.edges.push_back(e);
-	}
-}
-
-int BFS(string start, string dest, map<string,Node>& nodes){
-	queue<string> q;
-	vector<int> maxWeights;
-	q.push(start);
-	while(!q.empty()){
-		string nodeName = q.front();
-		Node node = nodes.find(nodeName) -> second;
-		int currentLevel = node.level;
+	while(true){
+		p = q.top();
 		q.pop();
-		for(Edge e : node.edges){
-			string nextNode = e.getTo().name;
-			int nextLevel = nodes.find(nextNode) -> second.level;
-			if(nextLevel != MAX_WEIGHT)
-				continue;
-			nodes.find(nextNode) -> second.level = min(e.getWeight(),currentLevel);
-			if(nextNode == dest){
-				maxWeights.push_back(min(e.getWeight(),currentLevel));
-				break;
-			}
-			else
-			{
-				q.push(nextNode);
+		if(p.first == end)
+			return p.second;
+		for(int i = 0; i < MAX_CITIES; i++){
+			if(graph[p.first][i] != INF){
+				if(min(p.second,graph[p.first][i]) > visited[i]){
+					visited[i] = min(p.second,graph[p.first][i]);
+					q.push(make_pair(i,visited[i]));
+				}
 			}
 		}
+
 	}
-	int MAX = 0;
-	for(int i : maxWeights){
-		MAX = max(MAX,i);
-	}
-	return MAX;
 }
 
 int main(){
-	map<string, Node> nodes;
-	int n, r,tons = 0;
+	map<string, int> nodes;
+	int n, r,tons,source,dest;
 	int scenario = 1;
 	while(cin >> n >> r){
+		nodes.clear();
+		for(int i = 0; i < MAX_CITIES; i++)
+			for(int j = 0; j < MAX_CITIES; j++)
+				graph[i][j] = INF;
+
 		if(n == 0 && r == 0)
 			break;
-		nodes.clear();
+
+		int id = 0;
 		for(int i = 0; i < r; i++){
 			string first, second;
-			int weight;
+			int weight,a,b;
 			cin >> first >> second >> weight;
-			addNodes(first,second,weight,nodes);
+			map_return ret = nodes.insert(make_pair(first,id));
+			if(ret.second){
+				a = id;
+				id++;
+			}
+			else{
+				a = ret.first -> second;
+			}
+			ret = nodes.insert(make_pair(second,id));
+			if(ret.second){
+				b = id;
+				id++;
+			}
+			else{
+				b = ret.first -> second;
+			}
+			graph[a][b] = weight;
+			graph[b][a] = weight;
 		}
 		
 		string start, end;
 		cin >> start >> end;
-		tons = max(tons, BFS(start, end, nodes));
-		cout << "Scenario #" << scenario << endl << tons << " tons" << endl;
+		source = nodes.find(start) -> second;
+		dest = nodes.find(end) -> second;
+		cout << "Scenario #" << scenario << endl << bfs(source,dest) << " tons" << endl;
 		scenario++;
 		cout << endl;
 	}
